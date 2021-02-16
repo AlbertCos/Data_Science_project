@@ -1,5 +1,5 @@
 import pandas as pd
 import streamlit as st
 
-st.title("test streamlit")
+st.title("Global Terrorism Exploration APP")
 
