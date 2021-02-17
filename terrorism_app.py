@@ -14,8 +14,9 @@ st.title("Global Terrorism Exploration APP")
 # TODO: Add "all regions option"****
 
 regions = df["region_txt"].unique().tolist()
-st.write(type(regions))
-st.write(regions)
+regions.insert(0,"All Regions")
+# st.write(type(regions))
+# st.write(regions)
 
 region = st.selectbox("Choose a Region", regions)
 
@@ -26,7 +27,9 @@ with col_filters:
     y_max = max(df["iyear"])
     year = st.slider("Choose a Year:", y_min, y_max, (y_min,y_max))
 
-    in_region=df["region_txt"] == region
+    in_region = df["region_txt"] == df["region_txt"]
+    if region != "All Regions":
+        in_region=df["region_txt"] == region
     #TODO: ADD "all countries option" ****
     country= st.selectbox("Choose a Country", options = df.loc[in_region,"country_txt"].unique())
 
