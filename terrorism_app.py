@@ -30,11 +30,22 @@ with col_filters:
     in_region = df["region_txt"] == df["region_txt"]
     if region != "All Regions":
         in_region=df["region_txt"] == region
+
+
     #TODO: ADD "all countries option" ****
-    country= st.selectbox("Choose a Country", options = df.loc[in_region,"country_txt"].unique())
+    countries = df.loc[in_region, "country_txt"].unique().tolist()
+    countries.insert(0,"All countries") 
+    country= st.selectbox("Choose a Country", options = countries)
+    is_country = df["country_txt"] == country
+
 
 with col_viz:
     chart_type = st.selectbox("Select type of viz: ", options = ["Line", "Histogram","Map"])
+
+    if chart_type == "Line":
+        line_data = df.loc[is_country & in_region, "iyear"].value_counts().reset_index()
+        st.line_chart(line_data, use_container_width = True)
+
 
 #Testing year slider choosed
 st.subheader(f"You have selected year: {year}! and {country}")
