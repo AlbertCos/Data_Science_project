@@ -25,6 +25,7 @@ col_filters, col_viz = st.beta_columns([1,3])
 with col_filters:
     y_min = min(df["iyear"])
     y_max = max(df["iyear"])
+
     year = st.slider("Choose a Year:", y_min, y_max, (y_min,y_max))
 
     in_region = df["region_txt"] == df["region_txt"]
@@ -35,6 +36,7 @@ with col_filters:
     #TODO: ADD "all countries option" ****
     countries = df.loc[in_region, "country_txt"].unique().tolist()
     countries.insert(0,"All countries") 
+
     country= st.selectbox("Choose a Country", options = countries)
     is_country = df["country_txt"] == country
 
@@ -43,8 +45,17 @@ with col_viz:
     chart_type = st.selectbox("Select type of viz: ", options = ["Line", "Histogram","Map"])
 
     if chart_type == "Line":
-        line_data = df.loc[is_country & in_region, "iyear"].value_counts().reset_index()
+        line_data = df[is_country & in_region].groupby(["iyear","country_txt"])["country_txt"].count()
+        line_data = line_data.to_frame()
+        line_data.columns = ["count"]
+        line_data.reset_index(inplace=True)
+ 
+ 
         st.line_chart(line_data, use_container_width = True)
+
+    elif chart_type == "Map":
+        st.write(type(df["latitude"]).values[0])
+        st.map(df)
 
 
 #Testing year slider choosed
