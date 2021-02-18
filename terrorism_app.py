@@ -8,6 +8,17 @@ def load_data(filename):
     df = df[keep_columns]
     return df
 
+def line_hist_data(df, f1, f2):
+    filtered = df.copy()
+    filtered = filtered[f1 & f2]
+    filtered.index = filtered["iyear"] 
+    data = filtered["iyear"].value_counts().to_frame().reset_index()
+    data.columns = ["year","count"]
+    data = data.sort_values(by = "year")
+    data.index = data["year"]
+    data.drop(columns = ["year"],inplace = True)
+    return data
+
 df = load_data("global_terror.csv")
 
 st.title("Global Terrorism Exploration APP")
@@ -47,32 +58,18 @@ with col_viz:
     chart_type = st.selectbox("Select type of viz: ", options = ["Line", "Histogram","Map"])
 
     if chart_type == "Line":
-        filtered = df.copy()
-        filtered = filtered[is_country & in_year_range]
-        filtered.index = filtered["iyear"] 
-        line_data = filtered["iyear"].value_counts().to_frame().reset_index()
-        line_data.columns = ["year","count"]
-        line_data = line_data.sort_values(by = "year")
-        line_data.index = line_data["year"]
-        line_data.drop(columns = ["year"],inplace = True)
- 
-        st.line_chart(line_data, use_container_width = True)
+
+        st.line_chart(line_hist_data(df,is_country,in_year_range), use_container_width = True)
 
     elif chart_type == "Map":
         st.write("There is a type error for now, to correct")
         st.map(df)
     elif chart_type =="Histogram":
-        filtered = df.copy()
-        filtered = filtered[is_country & in_year_range]
-        filtered.index = filtered["iyear"] 
-        line_data = filtered["iyear"].value_counts().to_frame().reset_index()
-        line_data.columns = ["year","count"]
-        line_data = line_data.sort_values(by = "year")
-        line_data.index = line_data["year"]
-        line_data.drop(columns = ["year"],inplace = True)
- 
-        st.bar_chart(line_data, use_container_width = True)
+        st.bar_chart(line_hist_data(df,is_country,in_year_range), use_container_width = True)
 
+
+if st.checkbox("Show Map"):
+    st.map(df)
 
 #filtereding year slider choosed
 st.subheader(f"You have selected year: {y1} and {y2} and {country}")
