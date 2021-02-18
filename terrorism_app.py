@@ -11,6 +11,8 @@ def load_data(filename):
 df = load_data("global_terror.csv")
 
 st.title("Global Terrorism Exploration APP")
+
+
 # TODO: Add "all regions option"****
 
 regions = df["region_txt"].unique().tolist()
@@ -26,7 +28,7 @@ with col_filters:
     y_min = min(df["iyear"])
     y_max = max(df["iyear"])
 
-    year = st.slider("Choose a Year:", y_min, y_max, (y_min,y_max))
+    y1,y2 = st.slider("Choose a Year:", y_min, y_max, (y_min,y_max))
 
     in_region = df["region_txt"] == df["region_txt"]
     if region != "All Regions":
@@ -39,27 +41,41 @@ with col_filters:
 
     country= st.selectbox("Choose a Country", options = countries)
     is_country = df["country_txt"] == country
-
+    in_year_range = df["iyear"].isin(range(y1,y2+1))
 
 with col_viz:
     chart_type = st.selectbox("Select type of viz: ", options = ["Line", "Histogram","Map"])
 
     if chart_type == "Line":
-        line_data = df[is_country & in_region].groupby(["iyear","country_txt"])["country_txt"].count()
-        line_data = line_data.to_frame()
-        line_data.columns = ["count"]
-        line_data.reset_index(inplace=True)
- 
+        filtered = df.copy()
+        filtered = filtered[is_country & in_year_range]
+        filtered.index = filtered["iyear"] 
+        line_data = filtered["iyear"].value_counts().to_frame().reset_index()
+        line_data.columns = ["year","count"]
+        line_data = line_data.sort_values(by = "year")
+        line_data.index = line_data["year"]
+        line_data.drop(columns = ["year"],inplace = True)
  
         st.line_chart(line_data, use_container_width = True)
 
     elif chart_type == "Map":
-        st.write(type(df["latitude"]).values[0])
+        st.write("There is a type error for now, to correct")
         st.map(df)
+    elif chart_type =="Histogram":
+        filtered = df.copy()
+        filtered = filtered[is_country & in_year_range]
+        filtered.index = filtered["iyear"] 
+        line_data = filtered["iyear"].value_counts().to_frame().reset_index()
+        line_data.columns = ["year","count"]
+        line_data = line_data.sort_values(by = "year")
+        line_data.index = line_data["year"]
+        line_data.drop(columns = ["year"],inplace = True)
+ 
+        st.bar_chart(line_data, use_container_width = True)
 
 
-#Testing year slider choosed
-st.subheader(f"You have selected year: {year}! and {country}")
+#filtereding year slider choosed
+st.subheader(f"You have selected year: {y1} and {y2} and {country}")
 
-#Test purposes
+#filtered purposes
 st.write(df)
