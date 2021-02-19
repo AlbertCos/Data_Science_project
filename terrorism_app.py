@@ -34,10 +34,11 @@ def line_attacks_over_time(df,country):
         x = data["Year"],
         y = data["Number of Attacks"],
         mode = "lines+markers",
-        marker = dict(color="#fff")
+        marker = dict(color="#F2A154")
     )
 
     fig = {'data':[country_trace]}
+
     return fig
 
 def hist_attacks_over_time(df,country):
@@ -46,12 +47,35 @@ def hist_attacks_over_time(df,country):
 
     country_trace = go.Histogram(
         x = filtered["iyear"],
-        marker = dict(color = "#fff")
+        marker = dict(color = "#F2A154")
     )
 
     fig = {'data' : [country_trace]}
     return fig
-    
+
+def pie_most_dangerous_cities (df,country):
+    country_filter = df["country_txt"] == country
+    filtered = df[country_filter]
+
+    bad_cities = filtered["city"].value_counts().to_frame().reset_index()
+    bad_cities.columns = ["City", "Number of Attacks"]
+    total_attacks = bad_cities["Number of Attacks"].sum()
+
+    thresh = bad_cities["Number of Attacks"].iloc[9]
+    big_bad_cities = bad_cities[bad_cities["Number of Attacks"]> thresh]
+    other = pd.Series(["Other",total_attacks - big_bad_cities["Number of Attacks"].sum()])
+    big_bad_cities.append(other, ignore_index=True)
+
+    data = dict(
+        values = big_bad_cities["Number of Attacks"],
+        labels = big_bad_cities["City"],
+        type = "pie",
+        hole = 0.3
+    )
+
+    fig = {'data' :[data]}
+  
+    return fig
 
 df = load_data("global_terror.csv")
 
@@ -99,9 +123,9 @@ with col_viz:
     plot_type = st.selectbox("Choose a visualization:", options = ["Histogram: Attacks Over Time", "Pie: Most Dangerous Cities"])
 
     if plot_type == "Histogram: Attacks Over Time":
-        st.plotly_chart(hist_attacks_over_time(df,country))
+        st.plotly_chart(hist_attacks_over_time(df,country),width=300 , height=400, margin=dict(l=0, r=0, b=0, t=0),autosize=False,)
     elif plot_type == "Pie: Most Dangerous Cities":
-        pass
+        st.plotly_chart(pie_most_dangerous_cities(df,country), width=300 , height=400, margin=dict(l=0, r=0, b=0, t=0),autosize=False,)
 
 st.subheader(f"{country}: Nationwide Attacks over Time")
-st.plotly_chart(line_attacks_over_time(df,country))
+st.plotly_chart(line_attacks_over_time(df,country), width=500 , height=400, margin=dict(l=0, r=0, b=0, t=0),autosize=False)
