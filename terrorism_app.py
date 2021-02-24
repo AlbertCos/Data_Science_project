@@ -79,11 +79,17 @@ def pie_most_dangerous_cities (df,country):
     bad_cities = filtered["city"].value_counts().to_frame().reset_index()
     bad_cities.columns = ["City", "Number of Attacks"]
     total_attacks = bad_cities["Number of Attacks"].sum()
+    try:
+        thresh = bad_cities["Number of Attacks"].iloc[9]
+    except:
+        thresh = 0
 
-    thresh = bad_cities["Number of Attacks"].iloc[9]
     big_bad_cities = bad_cities[bad_cities["Number of Attacks"]> thresh]
-    other = pd.Series(["Other",total_attacks - big_bad_cities["Number of Attacks"].sum()])
-    big_bad_cities.append(other, ignore_index=True)
+    other = pd.Series({"City":"Other",
+    "Number of Attacks":total_attacks - big_bad_cities["Number of Attacks"].sum()})
+
+    if other["Number of Attacks"] !=0:
+        big_bad_cities=big_bad_cities.append(other, ignore_index=True)
 
     Data = dict(
         values = big_bad_cities["Number of Attacks"],
@@ -105,7 +111,7 @@ def pie_most_dangerous_cities (df,country):
 
     return fig
 
-df = load_data("global_terror.csv")
+df = load_data("Terrorism_clean_dataset.csv")
 
 st.title("Global Terrorism Exploration APP")
 
@@ -133,7 +139,10 @@ with col_info:
     worst_city = df.loc[is_country,"city"].value_counts().head(1).index[0]
     city_in_state = df[df["city"] == worst_city].iloc[0]["provstate"]
     st.subheader("Most-Attacked City:")
-    st.markdown(f"*{worst_city},{city_in_state}*")
+    if type(city_in_state) != float:
+        st.markdown(f"*{worst_city}, {city_in_state}*")
+    else:
+        st.markdown(f"*{worst_city}*")
 
     #Most Attacked Year
     worst_year = df.loc[is_country,"iyear"].value_counts().head(1).index[0]
@@ -157,3 +166,10 @@ with col_viz:
 
 st.subheader(f"{country}: Nationwide Attacks over Time")
 st.plotly_chart(line_attacks_over_time(df,country))
+
+map_data = df.dropna(axis=0, subset=["latitude", "longitude"])
+in_lat = (df["latitude"] >=-90) & (df["latitude"] <=90)
+in_lon = (df["longitude"] >=-180) & (df["longitude"]<=180)
+map_data=map_data[in_lat & in_lon & is_country]
+st.subheader(f"{country}: Map representation with all_attacks (1970-2017)")
+st.map(map_data)
