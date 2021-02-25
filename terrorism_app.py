@@ -27,6 +27,9 @@ def load_data(filename):
     df = df[keep_columns]
     return df
 
+
+
+
 def world_line_attacks_over_time(df):
 
     data = df["iyear"].value_counts().to_frame().reset_index()
@@ -124,9 +127,11 @@ def hist_attacks_over_time(df,country):
     )
 
     Layout = dict(
-        margin=dict(l=0,r=0,b=0,t=0),
+        margin=dict(l=20,r=0,b=0,t=0),
         width = 500,
         height = 250,
+        xaxis=dict(title="Year"), 
+        yaxis=dict(title="Terrorist attacks (Number)")
     )
     
     fig = go.Figure(
@@ -135,6 +140,7 @@ def hist_attacks_over_time(df,country):
     )
 
     return fig
+
 
 def pie_most_dangerous_cities (df,country):
     country_filter = df["country_txt"] == country
@@ -163,7 +169,7 @@ def pie_most_dangerous_cities (df,country):
         showlegend=False
     )
     Layout = dict(
-        margin=dict(l=0,r=0,b=0,t=0),
+        margin=dict(l=20,r=0,b=0,t=0),
         width = 400,
         height = 400,
     )
@@ -203,7 +209,7 @@ def pie_most_attacked_targets (df,country):
         showlegend=False
     )
     Layout = dict(
-        margin=dict(l=0,r=0,b=0,t=0),
+        margin=dict(l=20,r=0,b=0,t=0),
         width = 400,
         height = 400,
     )
@@ -244,7 +250,7 @@ def pie_most_freq_type_attack (df,country):
         showlegend=False
     )
     Layout = dict(
-        margin=dict(l=0,r=0,b=0,t=0),
+        margin=dict(l=20,r=0,b=0,t=0),
         width = 400,
         height = 400,
     )
@@ -284,7 +290,7 @@ def pie_most_active_groups (df,country):
         showlegend=False
     )
     Layout = dict(
-        margin=dict(l=0,r=0,b=0,t=0),
+        margin=dict(l=20,r=0,b=0,t=0),
         width = 400,
         height = 400,
     )
@@ -342,6 +348,27 @@ with col_info:
     st.subheader("Year of Fewest Attacks:")
     st.markdown(f"*{best_year} with {num_attacks_best_year} attacks*")
 
+    #Most Mortal Year
+    df_filtered = df[is_country]
+    mortal_year_filtered = df_filtered.groupby(["iyear"]).agg(Total_attacks=("nkill","count"), Total_Killed=("nkill","sum"), Total_Wound=("nwound","sum")).sort_values(by=["Total_Killed"],ascending=False).reset_index()
+    year_mortal = mortal_year_filtered.iloc[0]["iyear"]
+    num_kill_worst_year =  mortal_year_filtered.iloc[0]['Total_Killed']
+    st.subheader("Year of Most people killed: ")
+    st.markdown(f"*{year_mortal} with {num_kill_worst_year} people killed*")
+
+    #Most Dangerous Terrorist Group
+    terrorist_group_filtered = df_filtered.groupby(["gname"]).agg(Total_attacks=("nkill","count"), Total_Killed=("nkill","sum"), Total_Wound=("nwound","sum")).sort_values(by=["Total_Killed"],ascending=False).reset_index()
+    worst_group = terrorist_group_filtered.iloc[0]["gname"]
+    if worst_group == "Unknown":
+        worst_group = terrorist_group_filtered.iloc[1]["gname"]
+        num_kill_t_worst_year =  terrorist_group_filtered.iloc[1]['Total_Killed']
+    else:
+        num_kill_t_worst_year =  terrorist_group_filtered.iloc[0]['Total_Killed']
+
+    st.subheader("The Most dangerous Terrorist Group: ")
+    st.markdown(f"*{worst_group} with {num_kill_t_worst_year} people killed in total during all the period (1970-2017)*")
+
+
 isyear=df["iyear"].unique().tolist()
 isyear.insert(0,"All history")
 
@@ -382,7 +409,7 @@ st.plotly_chart(line_attacks_over_time(df,country))
 
 figure, region1 = region_line_attacks_over_time(df,country)
 st.subheader(f"{region1}: Attacks over Time")
-st.markdown(f"The following chart represents the total attacks per year from 1970 till 2017 accross: {region1} region, the goal is to have as a reference the Terrorist activity in the region to see if {country} have a terrorist activity inusual regarding the region, if is a local problem, or a regional problem. ")
+st.markdown(f"The following chart represents the total attacks per year from 1970 till 2017 accross: {region1} region, the goal is to have as a reference to compare with, in order to see if {country} have a terrorist activity inusual regarding the region, if is a local problem, or a regional problem. ")
 st.plotly_chart(figure)
 
 
@@ -393,6 +420,7 @@ st.plotly_chart(world_line_attacks_over_time(df))
 
 
 st.header(f"Exploring data: {country}")
+st.warning("Please, choose a range of time using the slidebar on the left Menu to explore the data bellow")
 
 y_min =min(df["iyear"])
 y_max =max(df["iyear"])
@@ -410,12 +438,47 @@ map_data=map_data[in_lat & in_lon & is_country & in_year_range]
 
 st.map(map_data)
 df_filtered = df[in_year_range & is_country]
-worst_groups_filtered = df_filtered.groupby(["gname"]).agg(Total_attacks=("nkill","count"), Total_Killed=("nkill","sum"), Total_Wound=("nwound","sum")).reset_index()
-st.subheader(f"Actived Terrorist Groups between {y1} and {y2}: ")
-st.markdown(f"With regards to the period choosen, in the following table shows the Actived Terrorist groups in {country} between {y1} and {y2}, with the total attacks committed, number of people killed and wound.")
-st.dataframe(worst_groups_filtered)
+terror_groups_filtered = df_filtered.groupby(["gname"]).agg(Total_attacks=("nkill","count"), Total_Killed=("nkill","sum"), Total_Wound=("nwound","sum")).reset_index()
+terror_groups_filtered = terror_groups_filtered.rename(columns={"gname":"Group Name"})
 
-worst_groups_filtered = df_filtered.groupby(["attacktype1_txt"]).agg(Total_attacks=("nkill","count"), Total_Killed=("nkill","sum"), Total_Wound=("nwound","sum")).reset_index()
-st.subheader(f"Terrorist Attacks type used between {y1} and {y2}: ")
-st.markdown(f"With regards to the period choosen, in the following table shows the type of terroris attacks in {country} between {y1} and {y2}, with the total attacks committed, number of people killed and wound.")
-st.dataframe(worst_groups_filtered)
+###################################################
+st.subheader(f"Terrorist Groups in {country} between {y1} and {y2}: ")
+st.markdown(f"With regards to the period choosen, in the following table shows the terrorist groups active in {country} between {y1} and {y2}, showing the total attacks committed, number of people killed and wound by each group.")
+st.dataframe(terror_groups_filtered)
+st.markdown("")
+st.markdown("")
+
+###################################################
+attacks_type_filtered = df_filtered.groupby(["attacktype1_txt"]).agg(Total_attacks=("nkill","count"), Total_Killed=("nkill","sum"), Total_Wound=("nwound","sum")).reset_index()
+st.subheader(f"Terrorist Attack types in {country} between {y1} and {y2}: ")
+st.markdown(f"With regards to the period choosen, in the following table shows the types of terrorist attacks in {country} between {y1} and {y2}, with the total attacks committed, number of people killed and wound by each type")
+
+fig = go.Figure(data=[go.Histogram(x=df_filtered["attacktype1_txt"],marker = dict(color = "red"))], layout= dict (title=f"{country}: Terrorist attacks types  ({y1} - {y2})", xaxis=dict(title="Terrorist attack Types"), yaxis=dict(title="Total number of attacks")))
+st.plotly_chart(fig,width=600 , height=400, margin=dict(l=0, r=0, b=0, t=0))
+st.markdown("")
+st.markdown("")
+
+attacks_type_filtered= attacks_type_filtered.rename(columns={"attacktype1_txt":"Type of Attack"})
+st.markdown("")
+st.markdown("")
+st.markdown("In the table below, the more detailed information:")
+st.dataframe(attacks_type_filtered)
+st.markdown("")
+st.markdown("")
+
+st.subheader(f"Terrorist Attack targets in {country} between {y1} and {y2}: ")
+st.markdown(f"With regards to the period choosen, in the following table shows the terrorist attack targets in {country} between {y1} and {y2}, with the total attacks committed, number of people killed and wound by each type")
+
+
+fig = go.Figure(data=[go.Histogram(x=df_filtered["targtype1_txt"],marker = dict(color = "red"))], layout= dict (title=f"{country}: Terrorist attacks targets ({y1} - {y2})", xaxis=dict(title="Terrorist attack targets"), yaxis=dict(title="Total number of attacks")))
+st.plotly_chart(fig,width=600 , height=400, margin=dict(l=0, r=0, b=0, t=0))
+
+
+attacks_targets_filtered = df_filtered.groupby(["targtype1_txt"]).agg(Total_attacks=("nkill","count"), Total_Killed=("nkill","sum"), Total_Wound=("nwound","sum")).reset_index()
+attacks_targets_filtered= attacks_targets_filtered.rename(columns={"targtype1_txt":"Type of Target"})
+st.markdown("")
+st.markdown("")
+st.markdown("In the table below, the more detailed information:")
+st.dataframe(attacks_targets_filtered)
+st.markdown("")
+st.markdown("")
