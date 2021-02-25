@@ -117,29 +117,29 @@ def line_attacks_over_time(df,country):
 
     return fig
 
-def hist_attacks_over_time(df,country):
-    country_filter=df["country_txt"]==country
-    filtered = df[country_filter]
+# def hist_attacks_over_time(df,country):
+#     country_filter=df["country_txt"]==country
+#     filtered = df[country_filter]
 
-    country_trace = go.Histogram(
-        x = filtered["iyear"],
-        marker = dict(color = "#F2A154")
-    )
+#     country_trace = go.Histogram(
+#         x = filtered["iyear"],
+#         marker = dict(color = "#F2A154")
+#     )
 
-    Layout = dict(
-        margin=dict(l=20,r=0,b=0,t=0),
-        width = 500,
-        height = 250,
-        xaxis=dict(title="Year"), 
-        yaxis=dict(title="Terrorist attacks (Number)")
-    )
+#     Layout = dict(
+#         margin=dict(l=20,r=0,b=0,t=0),
+#         width = 500,
+#         height = 250,
+#         xaxis=dict(title="Year"), 
+#         yaxis=dict(title="Terrorist attacks (Number)")
+#     )
     
-    fig = go.Figure(
-        data= country_trace,
-        layout=go.Layout( Layout)
-    )
+#     fig = go.Figure(
+#         data= country_trace,
+#         layout=go.Layout( Layout)
+#     )
 
-    return fig
+#     return fig
 
 
 def pie_most_dangerous_cities (df,country):
@@ -319,12 +319,14 @@ else:
 #SIDEBAR COUNTRY SELECTOR
 countries = df.loc[in_region, "country_txt"].unique()
 country= st.sidebar.selectbox("Choose a Country", options = countries)
-
 is_country = df["country_txt"] == country
 
-st.title(f"Terrorism Brief: {country}")
+st.markdown("")
+st.header(f"Terrorism Brief: {country}")
+st.markdown("")
+st.markdown("")
 
-col_info, col_viz = st.beta_columns ([1,1.8])
+col_info, col_viz = st.beta_columns ([1,1.3])
 
 with col_info:
     #Most Attacked City
@@ -366,61 +368,67 @@ with col_info:
         num_kill_t_worst_year =  terrorist_group_filtered.iloc[0]['Total_Killed']
 
     st.subheader("The Most dangerous Terrorist Group: ")
-    st.markdown(f"*{worst_group} with {num_kill_t_worst_year} people killed in total during all the period (1970-2017)*")
+    st.markdown(f"**{worst_group}** *with* **{num_kill_t_worst_year} people killed** *in total during all the period (1970-2017)*")
 
 
 isyear=df["iyear"].unique().tolist()
 isyear.insert(0,"All history")
 
 with col_viz:
-    plot_type = st.selectbox("Choose a visualization:", options = ["Histogram: Attacks Over Time", "Pie: Most Dangerous Cities","Pie: Most Attacked Targets","Pie: Most Frequent Type of Attack", "Pie: Main Terrorist Groups"])
+    plot_type = st.selectbox("Choose a visualization:", options = ["Pie: Most Dangerous Cities","Pie: Most Attacked Targets","Pie: Most Frequent Type of Attack", "Pie: Main Terrorist Groups"])
 
-    if plot_type == "Histogram: Attacks Over Time":
-        st.plotly_chart(hist_attacks_over_time(df,country),width=300 , height=400, margin=dict(l=0, r=0, b=0, t=0),autosize=False,)
+    # if plot_type == "Histogram: Attacks Over Time":
+    #     st.plotly_chart(hist_attacks_over_time(df,country),width=300 , height=400, margin=dict(l=0, r=0, b=0, t=0),autosize=False,)
 
-    elif plot_type == "Pie: Most Dangerous Cities":
+    if plot_type == "Pie: Most Dangerous Cities":
         st.plotly_chart(pie_most_dangerous_cities(df,country), width=300 , height=400, margin=dict(l=0, r=0, b=0, t=0),autosize=False,)
-        worst_cities = df.loc[is_country,"city"].value_counts().head(5).rename_axis('City').reset_index(name='Number of Attacks')
+        worst_cities = df.loc[is_country,"city"].value_counts().head(5).rename_axis('City').reset_index(name='Total Attacks')
         st.subheader("Most-Dangerous Cities:")
         st.dataframe(worst_cities)
 
     elif plot_type == "Pie: Most Attacked Targets":
         st.plotly_chart(pie_most_attacked_targets(df,country),width=300 , height=400, margin=dict(l=0, r=0, b=0, t=0),autosize=False,)
-        worst_targets = df.loc[is_country,"targtype1_txt"].value_counts().head(5).rename_axis('Target Type').reset_index(name='Number of Attacks')
+        worst_targets = df.loc[is_country,"targtype1_txt"].value_counts().head(5).rename_axis('Target Type').reset_index(name='Total Attacks')
         st.subheader("Most Attacked Targets: ")
         st.dataframe(worst_targets)
 
     elif plot_type == "Pie: Most Frequent Type of Attack":
         st.plotly_chart(pie_most_freq_type_attack(df,country),width=300 , height=400, margin=dict(l=0, r=0, b=0, t=0),autosize=False,)
-        freq_attack = df.loc[is_country,"attacktype1_txt"].value_counts().head(5).rename_axis('Attack Type').reset_index(name='Number of Attacks')
+        freq_attack = df.loc[is_country,"attacktype1_txt"].value_counts().head(5).rename_axis('Attack Type').reset_index(name='Total Attacks')
         st.subheader("Most frequent type of attack: ")
         st.dataframe(freq_attack)
 
     elif plot_type == "Pie: Main Terrorist Groups":
         st.plotly_chart(pie_most_active_groups(df,country),width=300 , height=400, margin=dict(l=0, r=0, b=0, t=0),autosize=False,)
-        worst_groups = df.loc[is_country,"gname"].value_counts().head(5).rename_axis('Group Name').reset_index(name='Number of Attacks')
+        worst_groups = df.loc[is_country,"gname"].value_counts().head(5).rename_axis('Group Name').reset_index(name='Total Attacks')
         st.subheader("Most Active Terrorist Groups: ")
         st.dataframe(worst_groups)
 
+st.markdown("")
 st.subheader(f"{country}: Nationwide Attacks over Time")
-st.markdown(f"The following chart represents the total attacks per year from 1970 till 2017 in {country}")
+st.markdown(f"The following chart represents the **total attacks per year from 1970 till 2017** in **{country}**")
 st.plotly_chart(line_attacks_over_time(df,country))
 
 
 figure, region1 = region_line_attacks_over_time(df,country)
+st.markdown("")
 st.subheader(f"{region1}: Attacks over Time")
-st.markdown(f"The following chart represents the total attacks per year from 1970 till 2017 accross: {region1} region, the goal is to have as a reference to compare with, in order to see if {country} have a terrorist activity inusual regarding the region, if is a local problem, or a regional problem. ")
+st.markdown(f"The following chart represents the **total attacks per year from 1970 till 2017** accross **{region1} region**, the goal is to have as a reference to compare with, in order to see if {country} have a terrorist activity inusual regarding the region, if is a local problem, or a regional problem. ")
 st.plotly_chart(figure)
 
-
+st.markdown("")
 st.subheader("Worldwide Attacks over Time")
-st.markdown(f"The following chart represents the total attacks per year from 1970 till 2017 Worldwide")
+st.markdown(f"The following chart represents the **total attacks per year from 1970 till 2017 Worldwide**")
 st.plotly_chart(world_line_attacks_over_time(df))
 
 
-
+st.markdown("")
+st.markdown("")
 st.header(f"Exploring data: {country}")
-st.warning("Please, choose a range of time using the slidebar on the left Menu to explore the data bellow")
+st.markdown("")
+st.markdown("")
+st.warning("Please, choose a range of time using the slidebar on the left Menu to explore the data below.")
+st.markdown("")
 
 y_min =min(df["iyear"])
 y_max =max(df["iyear"])
@@ -442,6 +450,8 @@ terror_groups_filtered = df_filtered.groupby(["gname"]).agg(Total_attacks=("nkil
 terror_groups_filtered = terror_groups_filtered.rename(columns={"gname":"Group Name"})
 
 ###################################################
+st.markdown("")
+st.markdown("")
 st.subheader(f"Terrorist Groups in {country} between {y1} and {y2}: ")
 st.markdown(f"With regards to the period choosen, in the following table shows the terrorist groups active in {country} between {y1} and {y2}, showing the total attacks committed, number of people killed and wound by each group.")
 st.dataframe(terror_groups_filtered)
