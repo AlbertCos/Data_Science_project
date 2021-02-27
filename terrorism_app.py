@@ -45,8 +45,10 @@ def world_line_attacks_over_time(df):
 
     Layout = dict(
         margin=dict(l=0,r=0,b=0,t=0),
-        width = 800,
-        height = 200,
+        width = 700,
+        height = 250,
+        xaxis=dict(title="Year"), 
+        yaxis=dict(title="Number of attacks"),
     )
     
     fig = go.Figure(
@@ -76,8 +78,10 @@ def region_line_attacks_over_time(df,country):
 
     Layout = dict(
         margin=dict(l=0,r=0,b=0,t=0),
-        width = 800,
-        height = 200,
+        width = 700,
+        height = 250,
+        xaxis=dict(title="Year"), 
+        yaxis=dict(title="Number of attacks"),
     )
     
     fig = go.Figure(
@@ -106,8 +110,10 @@ def line_attacks_over_time(df,country):
 
     Layout = dict(
         margin=dict(l=0,r=0,b=0,t=0),
-        width = 800,
-        height = 200,
+        width = 700,
+        height = 250, 
+        xaxis=dict(title="Year"), 
+        yaxis=dict(title="Number of attacks"),
     )
     
     fig = go.Figure(
@@ -407,6 +413,7 @@ with col_viz:
 st.markdown("")
 st.subheader(f"{country}: Nationwide Attacks over Time")
 st.markdown(f"The following chart represents the **total attacks per year from 1970 till 2017** in **{country}**")
+st.markdown("")
 st.plotly_chart(line_attacks_over_time(df,country))
 
 
@@ -414,11 +421,13 @@ figure, region1 = region_line_attacks_over_time(df,country)
 st.markdown("")
 st.subheader(f"{region1}: Attacks over Time")
 st.markdown(f"The following chart represents the **total attacks per year from 1970 till 2017** accross **{region1} region**, the goal is to have as a reference to compare with, in order to see if {country} have a terrorist activity inusual regarding the region, if is a local problem, or a regional problem. ")
+st.markdown("")
 st.plotly_chart(figure)
 
 st.markdown("")
 st.subheader("Worldwide Attacks over Time")
 st.markdown(f"The following chart represents the **total attacks per year from 1970 till 2017 Worldwide**")
+st.markdown("")
 st.plotly_chart(world_line_attacks_over_time(df))
 
 
@@ -490,5 +499,9 @@ st.markdown("")
 st.markdown("")
 st.markdown("In the table below, the more detailed information:")
 st.dataframe(attacks_targets_filtered)
+st.markdown("")
+st.markdown("")
+
+st.header(f"{country}: Machine Learning, terrorism prediction")
 st.markdown("")
 st.markdown("")
