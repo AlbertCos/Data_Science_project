@@ -1,1 +1,1 @@
-web: streamlit run terrorism_app.py
+web: sh setup.sh && streamlit run terrorism_app.py
