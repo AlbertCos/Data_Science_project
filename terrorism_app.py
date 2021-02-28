@@ -3,6 +3,12 @@ import streamlit as st
 import numpy as np
 import plotly.graph_objs as go
 from plotly.offline import iplot
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
+from geopy.geocoders import Nominatim
+
+
 
 @st.cache
 def load_data(filename):
@@ -21,6 +27,21 @@ def load_data(filename):
         "gname",
         "nkill",
         "nwound",
+        "country",
+        "region",
+        "suicide",
+        "attacktype1",
+        "targtype1",
+        "weaptype1",
+        "weaptype1_txt",
+        "success",
+        "eventid",
+        "natlty1",
+        "natlty1_txt",
+        "extended",
+        "specificity",
+        "vicinity",
+        "crit1",
         ]
 
     df = pd.read_csv(filename,encoding="latin-1")  
@@ -309,6 +330,7 @@ def pie_most_active_groups (df,country):
     return fig
 
 
+
 df = load_data("Terrorism_clean_dataset.csv")
 
 st.title("Global Terrorism Exploration APP")
@@ -502,6 +524,116 @@ st.dataframe(attacks_targets_filtered)
 st.markdown("")
 st.markdown("")
 
-st.header(f"{country}: Machine Learning, terrorism prediction")
+##################################################################################
+
+st.header(f"{country}: Machine Learning, terrorism success attack prediction")
 st.markdown("")
 st.markdown("")
+
+dfnew = df[["iyear","imonth","iday", "success","attacktype1","targtype1","natlty1","weaptype1","nkill","country","region","latitude","longitude","specificity","vicinity","extended","crit1","suicide"]]
+
+dfnew = dfnew.dropna()
+X = dfnew.drop(["success"], axis=1, inplace = False)
+Y = dfnew["success"]
+
+X_train, X_test, y_train, y_test = train_test_split( X, Y, test_size = 0.3, random_state = 100)
+
+classifier = RandomForestClassifier(n_estimators = 10, criterion = "entropy", random_state = 0)
+classifier.fit(X_train, y_train)
+y_pred = classifier.predict(X_test)
+ac=str(round(accuracy_score(y_test,y_pred)*100,2))
+
+st.markdown(f"Using for the prediction Random Forest Clasification Algorithm with accuracy: {ac} %")
+
+
+def user_report(df,region, country):
+
+    geolocator = Nominatim(user_agent="my_user_agent")
+
+    cities =pd.unique(df[df['country_txt'] == country ]['city'].sort_values()).tolist()
+    city = st.selectbox("Choose a City",options =  cities)
+
+    country1 = df.loc[df['country_txt'] == country, 'country'].iloc[0]
+
+    loc = geolocator.geocode(city+','+ country)
+
+    iyear=st.slider('Year',2020,2030,(2020,2030))
+    imonth=st.slider('Month',1,12,(1,12))
+    iday=st.slider('Day',1,31,(1,31))
+
+    Attacktext = pd.unique(df[df['country_txt'] == country ]['attacktype1_txt'].sort_values()).tolist()
+    Attacktext = st.selectbox("Choose a Type of Attack",options =  Attacktext)
+    attacktype1=df.loc[df['attacktype1_txt'] == Attacktext, 'attacktype1'].iloc[0]
+
+    Targettext = pd.unique(df[df['city'] == city ]['targtype1_txt'].sort_values()).tolist()
+    Targettext= st.selectbox("Choose a Target",options =  Targettext)
+    targettype1=df.loc[df['targtype1_txt'] == Targettext, 'targtype1'].iloc[0]
+
+    
+    Weapntext = pd.unique(df[df['country_txt'] == country ]['weaptype1_txt'].sort_values()).tolist()
+    Weapntext = st.selectbox("Choose a Weapon",options =  Weapntext)
+    weaptype = df.loc[df['weaptype1_txt'] == Weapntext, 'weaptype1'].iloc[0]
+    
+    
+    nattext = pd.unique(df[df['country_txt'] == country ]['natlty1_txt'].sort_values()).tolist()
+    nattext = st.selectbox("Choose a natlty",options =  nattext)
+    natlty1= df.loc[df['natlty1_txt'] == nattext, 'natlty1'].iloc[0]
+
+    
+    nkillt = pd.unique(df[df['country_txt'] == country ]['nkill'].sort_values()).tolist()
+    nkill = st.selectbox("Choose the number of people killed",options =  nkillt)
+    
+
+    region = df.loc[df['region_txt'] == region, 'region'].iloc[0]
+    latitude = loc.latitude
+    longitude = loc.longitude
+    specificity = st.slider('Specificity',0,1,(0,1))
+
+    vicinity = st.slider('Vicinity',0,1,(0,1))
+
+    Extended = df["extended"].sort_values().unique().tolist()
+    Extended = st.selectbox("Choose if Extended attack (0 - Yes, 1 - No)", options =  Extended)
+    extended = Extended
+
+    Crit = df["crit1"].sort_values().unique().tolist()
+    Crit = st.selectbox("Choose if Criti Attack (0 - Yes, 1 - No)", options =  Crit)
+    crit1 = Crit
+
+    Suicide = df["suicide"].sort_values().unique().tolist()
+    Suicide = st.selectbox("Choose if Suicide Attack (0 - Yes, 1 - No)", options =  Suicide)
+    suicide = Suicide
+
+    user_report = {
+        "iyear":iyear,
+        "imonth":imonth,
+        "iday":iday,
+        "attacktype1":attacktype1,
+        "targtype1":targettype1,
+        "natlty1":natlty1,
+        "weaptype1":weaptype,
+        "nkill":nkill,
+        "country":country1,
+        "region": region,
+        "latitude": latitude,
+        "longitude": longitude,
+        "specificity": specificity,
+        "vicinity":vicinity,
+        "extended": extended,
+        "crit1": crit1,
+        "suicide":suicide,
+    }
+
+    report_data = pd.DataFrame(user_report)
+    return report_data
+
+user_data = user_report(df,region1,country)
+user_result= classifier.predict(user_data)
+st.subheader("The algorithm predicts that the terrosit attack would be:")
+output=""
+if user_result[0]==0:
+    output = "Fail"
+else:
+    output = "Success"
+st.write (output)
+
+
