@@ -331,10 +331,8 @@ def pie_most_active_groups (df,country):
     return fig
 
 
-uploaded_file = st.file_uploader("Terrorism_clean_dataset.csv")
-if uploaded_file is not None:
-    df = load_data(uploaded_file)
 
+df = load_data("Terrorism_clean_dataset.csv")
 
 
 st.title("Global Terrorism Exploration APP")
