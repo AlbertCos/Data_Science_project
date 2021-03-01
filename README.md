@@ -12,9 +12,9 @@ Terrorism exploration and Success prediction app, give to the users the posibili
 
 ![](https://github.com/AlbertCos/Data_Science_project/blob/master/moviegif4.gif)
 
-**Predict**
+**Explore by range of years**
 
-
+![](https://github.com/AlbertCos/Data_Science_project/blob/master/project2gif.gif)
 
 ## Installation
 Please the document "requirements.txt" where you can find the packages installed to deploy the app.
