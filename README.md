@@ -13,9 +13,6 @@ Terrorism exploration and Success prediction app, give to the users the posibili
 
 ![](https://github.com/AlbertCos/Data_Science_project/blob/master/moviegif4.gif)
 
-<<<<<<< HEAD
-**Explore by range of years**
-=======
 
 **Explore by range of years**
 
