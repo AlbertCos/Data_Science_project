@@ -25,7 +25,7 @@ Link to the app: https://terrorismapp.herokuapp.com/
 **Machine Learning: Random Forest Clasification for Success prediction**
 
 ![](https://github.com/AlbertCos/Data_Science_project/blob/master/project3gif.gif)
->>>>>>> 87e8fc4b4dba903ef76dd4f43fad558b43bd42e6
+
 
 ![](https://github.com/AlbertCos/Data_Science_project/blob/master/project2gif.gif)
 
