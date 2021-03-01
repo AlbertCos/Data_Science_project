@@ -26,8 +26,8 @@ Terrorism exploration and Success prediction app, give to the users the posibili
 
 
 ## Installation
-Please the document "requirements.txt" where you can find the packages installed to deploy the app.
-The webapp is using streamlit and Heroku
+In the document "requirements.txt" you can find the packages installed to run the app.
+The webapp is using streamlit and deployed using Heroku.
 
 ## Database
 This application uses the database: Global Terrorism Database, more information here: https://www.start.umd.edu/data-tools/global-terrorism-database-gtd
