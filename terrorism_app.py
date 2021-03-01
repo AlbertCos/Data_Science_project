@@ -532,10 +532,12 @@ st.header(f"{country}: Machine Learning, terrorism success attack prediction")
 st.markdown("")
 st.markdown("")
 
-dfnew = df[["iyear","imonth","iday", "success","attacktype1","targtype1","natlty1","weaptype1","nkill","country","region","latitude","longitude","specificity","vicinity","extended","crit1","suicide"]]
+dfnew = df[["imonth","iday", "success","attacktype1","targtype1","natlty1","weaptype1","nkill","region","latitude","longitude","specificity","vicinity","extended","suicide"]]
+
+dfnew['lab_kill'] = dfnew['nkill'].apply(lambda x: 1 if x > 0 else 0)
 
 dfnew = dfnew.dropna()
-X = dfnew.drop(["success"], axis=1, inplace = False)
+X = dfnew.drop(["nkill","success"], axis=1, inplace = False)
 Y = dfnew["success"]
 
 X_train, X_test, y_train, y_test = train_test_split( X, Y, test_size = 0.3, random_state = 100)
@@ -548,23 +550,22 @@ ac=str(round(accuracy_score(y_test,y_pred)*100,2))
 st.markdown(f"Using for the prediction Random Forest Clasification Algorithm with accuracy: {ac} %")
 
 
-def user_report(df,region, country):
+def user_report(df, dfclean, region, country):
 
     geolocator = Nominatim(user_agent="my_user_agent")
 
     cities =pd.unique(df[df['country_txt'] == country ]['city'].sort_values()).tolist()
     city = st.selectbox("Choose a City",options =  cities)
 
-    country1 = df.loc[df['country_txt'] == country, 'country'].iloc[0]
+    # country1 = df.loc[df['country_txt'] == country, 'country'].iloc[0]
 
     loc = geolocator.geocode(city+','+ country)
 
-    iyear=st.slider('Year',2020,2030,(2020,2030))
     imonth=st.slider('Month',1,12,(1,12))
     iday=st.slider('Day',1,31,(1,31))
 
     Attacktext = pd.unique(df[df['country_txt'] == country ]['attacktype1_txt'].sort_values()).tolist()
-    Attacktext = st.selectbox("Choose a Type of Attack",options =  Attacktext)
+    Attacktext = st.selectbox("Choose the Type of Attack",options =  Attacktext)
     attacktype1=df.loc[df['attacktype1_txt'] == Attacktext, 'attacktype1'].iloc[0]
 
     Targettext = pd.unique(df[df['city'] == city ]['targtype1_txt'].sort_values()).tolist()
@@ -573,69 +574,68 @@ def user_report(df,region, country):
 
     
     Weapntext = pd.unique(df[df['country_txt'] == country ]['weaptype1_txt'].sort_values()).tolist()
-    Weapntext = st.selectbox("Choose a Weapon",options =  Weapntext)
+    Weapntext = st.selectbox("Choose the main Weapon used in the attack",options =  Weapntext)
     weaptype = df.loc[df['weaptype1_txt'] == Weapntext, 'weaptype1'].iloc[0]
     
     
     nattext = pd.unique(df[df['country_txt'] == country ]['natlty1_txt'].sort_values()).tolist()
-    nattext = st.selectbox("Choose a natlty",options =  nattext)
+    nattext = st.selectbox("Choose the target nationality",options =  nattext)
     natlty1= df.loc[df['natlty1_txt'] == nattext, 'natlty1'].iloc[0]
 
     
-    nkillt = pd.unique(df[df['country_txt'] == country ]['nkill'].sort_values()).tolist()
-    nkill = st.selectbox("Choose the number of people killed",options =  nkillt)
+    killed = dfclean["lab_kill"].sort_values().unique().tolist()
+    killed = st.selectbox("Choose if there if would be people killed, (0, no killed, 1 people killed)",options =  killed)
     
-
     region = df.loc[df['region_txt'] == region, 'region'].iloc[0]
     latitude = loc.latitude
     longitude = loc.longitude
-    specificity = st.slider('Specificity',0,1,(0,1))
 
-    vicinity = st.slider('Vicinity',0,1,(0,1))
+    Specificity = dfclean["specificity"].sort_values().unique().tolist()
+    Specificity = st.selectbox("Choose the Specificity", options =  Specificity)
+    specificity = Specificity
+    st.markdown("**Specificity:** **1** = event occurred in city/village/town and lat/long is for that location, **2** = event occurred in city/village/town and no lat/long could be found, so coordinates are for centroid of smallest subnational administrative region identified, **3** = event did not occur in city/village/town, so coordinates are for centroid of smallest subnational administrative region identified, **4** = no 2nd order or smaller region could be identified, so coordinates are for center of 1st order administrative region,**5** = no 1st order administative region could be identified for the location of the attack, so latitude and longitude are unknown")
 
-    Extended = df["extended"].sort_values().unique().tolist()
+    Vicinity = dfclean["vicinity"].sort_values().unique().tolist()
+    Vicinity = st.selectbox("Choose if Vicinity (0 - Yes, 1 - No)", options =  Vicinity)
+    vicinity = Vicinity
+
+    Extended = dfclean["extended"].sort_values().unique().tolist()
     Extended = st.selectbox("Choose if Extended attack (0 - Yes, 1 - No)", options =  Extended)
     extended = Extended
 
-    Crit = df["crit1"].sort_values().unique().tolist()
-    Crit = st.selectbox("Choose if Criti Attack (0 - Yes, 1 - No)", options =  Crit)
-    crit1 = Crit
-
-    Suicide = df["suicide"].sort_values().unique().tolist()
+    Suicide = dfclean["suicide"].sort_values().unique().tolist()
     Suicide = st.selectbox("Choose if Suicide Attack (0 - Yes, 1 - No)", options =  Suicide)
     suicide = Suicide
 
     user_report = {
-        "iyear":iyear,
+
         "imonth":imonth,
         "iday":iday,
         "attacktype1":attacktype1,
         "targtype1":targettype1,
         "natlty1":natlty1,
         "weaptype1":weaptype,
-        "nkill":nkill,
-        "country":country1,
+        "nkill":killed,
         "region": region,
         "latitude": latitude,
         "longitude": longitude,
         "specificity": specificity,
         "vicinity":vicinity,
         "extended": extended,
-        "crit1": crit1,
         "suicide":suicide,
     }
 
     report_data = pd.DataFrame(user_report)
     return report_data
 
-user_data = user_report(df,region1,country)
+user_data = user_report(df, dfnew, region1,country)
 user_result= classifier.predict(user_data)
-st.subheader("The algorithm predicts that the terrosit attack would be:")
+st.subheader("The algorithm predicts that the terrosit attack would:")
 output=""
 if user_result[0]==0:
     output = "Fail"
 else:
     output = "Success"
-st.write (output)
+st.header (output)
 
 
