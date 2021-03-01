@@ -10,15 +10,29 @@ Terrorism exploration and Success prediction app, give to the users the posibili
 
 **Explore by country**
 
+
 ![](https://github.com/AlbertCos/Data_Science_project/blob/master/moviegif4.gif)
 
+<<<<<<< HEAD
 **Explore by range of years**
+=======
+
+**Explore by range of years**
+
+
+![](https://github.com/AlbertCos/Data_Science_project/blob/master/project2gif.gif)
+
+
+**Machine Learning: Random Forest Clasification for Success prediction**
+
+![](https://github.com/AlbertCos/Data_Science_project/blob/master/project3gif.gif)
+>>>>>>> 87e8fc4b4dba903ef76dd4f43fad558b43bd42e6
 
 ![](https://github.com/AlbertCos/Data_Science_project/blob/master/project2gif.gif)
 
 ## Installation
-Please the document "requirements.txt" where you can find the packages installed to deploy the app.
-The webapp is using streamlit and Heroku
+In the document "requirements.txt" you can find the packages installed to run the app.
+The webapp is using streamlit and deployed using Heroku.
 
 ## Database
 This application uses the database: Global Terrorism Database, more information here: https://www.start.umd.edu/data-tools/global-terrorism-database-gtd
