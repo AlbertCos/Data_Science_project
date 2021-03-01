@@ -10,14 +10,20 @@ Terrorism exploration and Success prediction app, give to the users the posibili
 
 **Explore by country**
 
+
 ![](https://github.com/AlbertCos/Data_Science_project/blob/master/moviegif4.gif)
+
 
 **Explore by range of years**
 
+
 ![](https://github.com/AlbertCos/Data_Science_project/blob/master/project2gif.gif)
 
-**Machine Learning: Random Forest Clasification for Success prediction
+
+**Machine Learning: Random Forest Clasification for Success prediction**
+
 ![](https://github.com/AlbertCos/Data_Science_project/blob/master/project3gif.gif)
+
 
 ## Installation
 Please the document "requirements.txt" where you can find the packages installed to deploy the app.
