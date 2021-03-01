@@ -16,6 +16,9 @@ Terrorism exploration and Success prediction app, give to the users the posibili
 
 ![](https://github.com/AlbertCos/Data_Science_project/blob/master/project2gif.gif)
 
+**Machine Learning: Random Forest Clasification for Success prediction
+![](https://github.com/AlbertCos/Data_Science_project/blob/master/project3gif.gif)
+
 ## Installation
 Please the document "requirements.txt" where you can find the packages installed to deploy the app.
 The webapp is using streamlit and Heroku
