@@ -5,6 +5,8 @@
 ## Description
 Terrorism exploration and Success prediction app, give to the users the posibility to explore the data from 1970 to 2019, with regards to Terrorism, by country. Also, give sthe posibility to the user to predict if a terrorist attack would be successful or not. For the prediction, the app uses Random Forest Classification algorithm, with accuracy of 92%.
 
+Link to the app: https://terrorismapp.herokuapp.com/
+
 
 ## Features
 
