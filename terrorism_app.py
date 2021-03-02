@@ -622,9 +622,9 @@ user_result= classifier.predict(user_data)
 st.subheader("The algorithm predicts that the terrosit attack would:")
 output=""
 if user_result[0]==0:
-    output = "Fail"
+    output = "Failed"
 else:
-    output = "Success"
+    output = "Succeed"
 st.header (output)
 
 
