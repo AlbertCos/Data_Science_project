@@ -1,4 +1,4 @@
-# Data_Science_project: Terrorism exploration and Success prediction app
+# Data Science project: Terrorism exploration and Success prediction app
 
 
 
