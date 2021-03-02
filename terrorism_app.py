@@ -145,31 +145,6 @@ def line_attacks_over_time(df,country):
 
     return fig
 
-# def hist_attacks_over_time(df,country):
-#     country_filter=df["country_txt"]==country
-#     filtered = df[country_filter]
-
-#     country_trace = go.Histogram(
-#         x = filtered["iyear"],
-#         marker = dict(color = "#F2A154")
-#     )
-
-#     Layout = dict(
-#         margin=dict(l=20,r=0,b=0,t=0),
-#         width = 500,
-#         height = 250,
-#         xaxis=dict(title="Year"), 
-#         yaxis=dict(title="Terrorist attacks (Number)")
-#     )
-    
-#     fig = go.Figure(
-#         data= country_trace,
-#         layout=go.Layout( Layout)
-#     )
-
-#     return fig
-
-
 def pie_most_dangerous_cities (df,country):
     country_filter = df["country_txt"] == country
     filtered = df[country_filter]
@@ -358,6 +333,7 @@ st.markdown("")
 
 col_info, col_viz = st.beta_columns ([1,1.3])
 
+##Brief part column information
 with col_info:
     #Most Attacked City
     worst_city = df.loc[is_country,"city"].value_counts().head(1).index[0]
@@ -404,11 +380,9 @@ with col_info:
 isyear=df["iyear"].unique().tolist()
 isyear.insert(0,"All history")
 
+## Brief part, plot selection option
 with col_viz:
     plot_type = st.selectbox("Choose a visualization:", options = ["Pie: Most Dangerous Cities","Pie: Most Attacked Targets","Pie: Most Frequent Type of Attack", "Pie: Main Terrorist Groups"])
-
-    # if plot_type == "Histogram: Attacks Over Time":
-    #     st.plotly_chart(hist_attacks_over_time(df,country),width=300 , height=400, margin=dict(l=0, r=0, b=0, t=0),autosize=False,)
 
     if plot_type == "Pie: Most Dangerous Cities":
         st.plotly_chart(pie_most_dangerous_cities(df,country), width=300 , height=400, margin=dict(l=0, r=0, b=0, t=0),autosize=False,)
@@ -526,30 +500,40 @@ st.dataframe(attacks_targets_filtered)
 st.markdown("")
 st.markdown("")
 
-##################################################################################
+###************************MACHINE LEARNING**********************************###
 
 st.header(f"{country}: Machine Learning, terrorism success attack prediction")
 st.markdown("")
 st.markdown("")
 
+#Choosing Variables for feed our  model
+
 dfnew = df[["imonth","iday", "success","attacktype1","targtype1","natlty1","weaptype1","nkill","region","latitude","longitude","specificity","vicinity","extended","suicide"]]
 
+#Creating new variable to substitue nkill by a boolean 
 dfnew['lab_kill'] = dfnew['nkill'].apply(lambda x: 1 if x > 0 else 0)
 
 dfnew = dfnew.dropna()
 X = dfnew.drop(["nkill","success"], axis=1, inplace = False)
 Y = dfnew["success"]
 
+##Spliting data set in training and test
 X_train, X_test, y_train, y_test = train_test_split( X, Y, test_size = 0.3, random_state = 100)
 
 classifier = RandomForestClassifier(n_estimators = 10, criterion = "entropy", random_state = 0)
 classifier.fit(X_train, y_train)
+##Predict Y with the x test
 y_pred = classifier.predict(X_test)
+
+## Calculation of accuracy score
 ac=str(round(accuracy_score(y_test,y_pred)*100,2))
 
-st.markdown(f"Using for the prediction Random Forest Clasification Algorithm with accuracy: {ac} %")
+st.markdown(f"Using for the prediction **Random Forest Clasification Algorithm with accuracy: {ac} %**. Please proceed below, introducing the data:")
 
 
+
+
+##Function to get the imputs for predict
 def user_report(df, dfclean, region, country):
 
     geolocator = Nominatim(user_agent="my_user_agent")
@@ -557,12 +541,13 @@ def user_report(df, dfclean, region, country):
     cities =pd.unique(df[df['country_txt'] == country ]['city'].sort_values()).tolist()
     city = st.selectbox("Choose a City",options =  cities)
 
-    # country1 = df.loc[df['country_txt'] == country, 'country'].iloc[0]
-
     loc = geolocator.geocode(city+','+ country)
 
-    imonth=st.slider('Month',1,12,(1,12))
-    iday=st.slider('Day',1,31,(1,31))
+    imonthst = dfclean["imonth"].sort_values().unique().tolist()
+    imonths = st.selectbox("Choose month:",options = imonthst)
+
+    idayst = dfclean["iday"].sort_values().unique().tolist()
+    idays = st.selectbox("Choose day:",options =  idayst)
 
     Attacktext = pd.unique(df[df['country_txt'] == country ]['attacktype1_txt'].sort_values()).tolist()
     Attacktext = st.selectbox("Choose the Type of Attack",options =  Attacktext)
@@ -596,7 +581,7 @@ def user_report(df, dfclean, region, country):
     st.markdown("**Specificity:** **1** = event occurred in city/village/town and lat/long is for that location, **2** = event occurred in city/village/town and no lat/long could be found, so coordinates are for centroid of smallest subnational administrative region identified, **3** = event did not occur in city/village/town, so coordinates are for centroid of smallest subnational administrative region identified, **4** = no 2nd order or smaller region could be identified, so coordinates are for center of 1st order administrative region,**5** = no 1st order administative region could be identified for the location of the attack, so latitude and longitude are unknown")
 
     Vicinity = dfclean["vicinity"].sort_values().unique().tolist()
-    Vicinity = st.selectbox("Choose if Vicinity (0 - Yes, 1 - No)", options =  Vicinity)
+    Vicinity = st.selectbox("Choose if Vicinity (0 - Yes, 1 - No)", (0,1))
     vicinity = Vicinity
 
     Extended = dfclean["extended"].sort_values().unique().tolist()
@@ -609,8 +594,8 @@ def user_report(df, dfclean, region, country):
 
     user_report = {
 
-        "imonth":imonth,
-        "iday":iday,
+        "imonth":imonths,
+        "iday":idays,
         "attacktype1":attacktype1,
         "targtype1":targettype1,
         "natlty1":natlty1,
@@ -625,11 +610,15 @@ def user_report(df, dfclean, region, country):
         "suicide":suicide,
     }
 
-    report_data = pd.DataFrame(user_report)
+    report_data = pd.DataFrame(user_report, index=[0])
     return report_data
 
 user_data = user_report(df, dfnew, region1,country)
+
+## Predict using the inputs from the user
 user_result= classifier.predict(user_data)
+
+## Result prediction
 st.subheader("The algorithm predicts that the terrosit attack would:")
 output=""
 if user_result[0]==0:
