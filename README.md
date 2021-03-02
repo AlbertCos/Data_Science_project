@@ -17,9 +17,11 @@ The definition of a successful attack depends on the type of attack. Essentially
     1 = "Yes" The incident was successful.
     0 = "No" The incident was not successful
    
-   
-Link to the app: https://terrorismapp.herokuapp.com/
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+**Link to the app: https://terrorismapp.herokuapp.com/
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 ## Features
 
