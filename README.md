@@ -25,12 +25,14 @@ Using the link to the app, in the sidebar, the user could choose a country to ex
 
 
 **Explore by range of years**
-In the second part, we could explore selecting by range of years in the sidebar. We can see the attacks in the map of the country [to.do]
+In the second part, we could explore selecting by range of years in the sidebar. We can see the attacks in the map for the period selected, the terrorist group active in the countrie during that period, terrorist attacks types and terrorist attack targets.
 
 ![](https://github.com/AlbertCos/Data_Science_project/blob/master/project2gif.gif)
 
 
 **Machine Learning: Random Forest Clasification for Success prediction**
+
+With an accuracy of 91.82 %, the user could predict if the terrorist attack could be successful or not, by imputing the variables: City, month, day, type of attack, target, Weapon, target nationality, people killed, specificity, vicinity, extended attack, Suicide attack.
 
 ![](https://github.com/AlbertCos/Data_Science_project/blob/master/project3gif.gif)
 
