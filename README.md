@@ -3,7 +3,7 @@
 
 
 ## Description
-Terrorism exploration and Success prediction app, give to the users the posibility to explore the data from 1970 to 2019, with regards to Terrorism, by country. Also, give sthe posibility to the user to predict if a terrorist attack would be successful or not. For the prediction, the app uses Random Forest Classification algorithm, with accuracy of 92%.
+Terrorism exploration and Success prediction app, give to the users the posibility to explore the Global Terrorism database from 1970 to 2019 through a webapp developed using Streamlit, exploring by country and choosing a range of time. Also, gives the posibility to the user to predict if a terrorist attack would be successful or not. For the prediction, the app uses Random Forest Classification algorithm, with accuracy of 92%.
 
 Link to the app: https://terrorismapp.herokuapp.com/
 
@@ -26,8 +26,6 @@ Link to the app: https://terrorismapp.herokuapp.com/
 
 ![](https://github.com/AlbertCos/Data_Science_project/blob/master/project3gif.gif)
 
-
-![](https://github.com/AlbertCos/Data_Science_project/blob/master/project2gif.gif)
 
 ## Installation
 In the document "requirements.txt" you can find the packages installed to run the app.
