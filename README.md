@@ -5,7 +5,12 @@
 ## Description
 Terrorism exploration and Success prediction app, give to the users the posibility to explore the Global Terrorism database from 1970 to 2019 through a webapp developed using Streamlit, exploring by country and choosing a range of time. Also, gives the posibility to the user to predict if a terrorist attack would be successful or not. For the prediction, the app uses Random Forest Classification algorithm, with accuracy of 92%.
 
-Codebook Documentation of the Database: https://www.start.umd.edu/gtd/downloads/Codebook.pdf
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+**Codebook Documentation of the Database: https://www.start.umd.edu/gtd/downloads/Codebook.pdf**
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 
 **Success of a terrorist strike** is defined according to the tangible effects of the attack. **Success is not judged in terms of the larger goals of the perpetrators.** For example, a bomb that exploded in a building would be counted as a success even if it did not succeed in bringing the building down or inducing government repression.
 The definition of a successful attack depends on the type of attack. Essentially, the key question is whether or not the attack type took place. If a case has multiple attack types, it is successful if any of the attack types are successful, with the exception of assassinations, which are only successful if the intended target is killed.
@@ -40,6 +45,11 @@ With an accuracy of 91.82 %, the user could predict if the terrorist attack coul
 ## Installation
 In the document "requirements.txt" you can find the packages installed to run the app.
 The webapp is using streamlit and deployed using Heroku.
+
+## Supporting documentation:
+To analyse the procedure of data preprocessing, data cleaning, feature selection and conclusions, find the link to the Notebook below:
+https://github.com/AlbertCos/Data_Science_project/blob/master/Global_Terrorism_exploration_and_prediction_app.ipynb
+
 
 ## Database
 This application uses the database: Global Terrorism Database, more information here: https://www.start.umd.edu/data-tools/global-terrorism-database-gtd
