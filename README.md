@@ -7,7 +7,7 @@ Terrorism exploration and Success prediction app, give to the users the posibili
 
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-**Codebook Documentation of the Database: https://www.start.umd.edu/gtd/downloads/Codebook.pdf**
+**Codebook Documentation of the Database: https://www.start.umd.edu/gtd/downloads/Codebook.pdf **
 
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -19,7 +19,7 @@ The definition of a successful attack depends on the type of attack. Essentially
    
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-**Link to the app: https://terrorismapp.herokuapp.com/
+**Link to the app: https://terrorismapp.herokuapp.com/ **
 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
