@@ -604,8 +604,6 @@ def user_report(df, dfclean, region, country):
         "targtype1":targettype1,
         "natlty1":natlty1,
         "weaptype1":weaptype,
-        "nkill":killed,
-        "nwound":twound,
         "region": region,
         "latitude": latitude,
         "longitude": longitude,
@@ -613,6 +611,8 @@ def user_report(df, dfclean, region, country):
         "vicinity":vicinity,
         "extended": extended,
         "suicide":suicide,
+        "lab_kill":killed,
+        "lab_wound":twound,
     }
 
     report_data = pd.DataFrame(user_report, index=[0])
@@ -624,7 +624,10 @@ user_data = user_report(df, dfnew, region1,country)
 user_result= classifier.predict(user_data)
 
 ## Result prediction
+
+
 st.subheader("The algorithm predicts that the terrosit attack would:")
+
 output=""
 if user_result[0]==0:
     output = "Failed"
