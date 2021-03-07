@@ -39,7 +39,7 @@ In the second part, we could explore selecting by range of years in the sidebar.
 
 ### **Machine Learning: Random Forest Clasification for Success prediction**
 
-With an accuracy of 91.82 %, the user could predict if the terrorist attack could be successful or not, by imputing the variables: City, month, day, type of attack, target, Weapon, target nationality, people killed, specificity, vicinity, extended attack, Suicide attack.
+With an accuracy of 92.55 %, the user could predict if the terrorist attack could be successful or not, by imputing the variables: City, month, day, type of attack, target, Weapon, target nationality, people killed, specificity, vicinity, extended attack, Suicide attack.
 
 ![](https://github.com/AlbertCos/Data_Science_project/blob/master/project3gif.gif)
 
