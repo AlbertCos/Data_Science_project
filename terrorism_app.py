@@ -508,13 +508,14 @@ st.markdown("")
 
 #Choosing Variables for feed our  model
 
-dfnew = df[["imonth","iday", "success","attacktype1","targtype1","natlty1","weaptype1","nkill","region","latitude","longitude","specificity","vicinity","extended","suicide"]]
+dfnew = df[["imonth","iday", "success","attacktype1","targtype1","natlty1","weaptype1","nkill","nwound","region","latitude","longitude","specificity","vicinity","extended","suicide"]]
 
 #Creating new variable to substitue nkill by a boolean 
 dfnew['lab_kill'] = dfnew['nkill'].apply(lambda x: 1 if x > 0 else 0)
+dfnew['lab_wound'] = dfnew['nwound'].apply(lambda x: 1 if x > 0 else 0)
 
 dfnew = dfnew.dropna()
-X = dfnew.drop(["nkill","success"], axis=1, inplace = False)
+X = dfnew.drop(["nkill","nwound","success"], axis=1, inplace = False)
 Y = dfnew["success"]
 
 ##Spliting data set in training and test
@@ -570,6 +571,9 @@ def user_report(df, dfclean, region, country):
     
     killed = dfclean["lab_kill"].sort_values().unique().tolist()
     killed = st.selectbox("Choose if there if would be people killed, (0, no killed, 1 people killed)",options =  killed)
+
+    twound = dfclean["lab_wound"].sort_values().unique().tolist()
+    twound = st.selectbox("Choose if there if would be people wound, (0, no wound, 1, people wound)",options =  twound)
     
     region = df.loc[df['region_txt'] == region, 'region'].iloc[0]
     latitude = loc.latitude
@@ -601,6 +605,7 @@ def user_report(df, dfclean, region, country):
         "natlty1":natlty1,
         "weaptype1":weaptype,
         "nkill":killed,
+        "nwound":twound,
         "region": region,
         "latitude": latitude,
         "longitude": longitude,
