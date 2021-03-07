@@ -585,15 +585,15 @@ def user_report(df, dfclean, region, country):
     st.markdown("**Specificity:** **1** = event occurred in city/village/town and lat/long is for that location, **2** = event occurred in city/village/town and no lat/long could be found, so coordinates are for centroid of smallest subnational administrative region identified, **3** = event did not occur in city/village/town, so coordinates are for centroid of smallest subnational administrative region identified, **4** = no 2nd order or smaller region could be identified, so coordinates are for center of 1st order administrative region,**5** = no 1st order administative region could be identified for the location of the attack, so latitude and longitude are unknown")
 
     Vicinity = dfclean["vicinity"].sort_values().unique().tolist()
-    Vicinity = st.selectbox("Choose if Vicinity (0 - Yes, 1 - No)", (0,1))
+    Vicinity = st.selectbox("Choose if Vicinity (0 - No, 1 - Yes)", (0,1))
     vicinity = Vicinity
 
     Extended = dfclean["extended"].sort_values().unique().tolist()
-    Extended = st.selectbox("Choose if Extended attack (0 - Yes, 1 - No)", options =  Extended)
+    Extended = st.selectbox("Choose if Extended attack (0 - No, 1 - Yes)", options =  Extended)
     extended = Extended
 
     Suicide = dfclean["suicide"].sort_values().unique().tolist()
-    Suicide = st.selectbox("Choose if Suicide Attack (0 - Yes, 1 - No)", options =  Suicide)
+    Suicide = st.selectbox("Choose if Suicide Attack (0 - No, 1 - Yes)", options =  Suicide)
     suicide = Suicide
 
     user_report = {
